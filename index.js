@@ -7,8 +7,9 @@ const cookieParser = require('cookie-parser')
 const { StatusCodes } = require('http-status-codes')
 const connectDb = require('./db/config')
 const fileUpload = require("express-fileupload")
- 
-const PORT = process.env.PORT
+const path = require('path')
+
+ const PORT = process.env.PORT
 
 const app = express()
 
@@ -27,9 +28,20 @@ app.use(fileUpload({
 }))
 
 //index route
-app.get(`/`, async (req,res) =>{
-    return res.status(StatusCodes.OK).json({ status: true, msg: "Welcome to Project-LMS-API"})
-})
+if(process.env.MODE === "production") {
+    app.use(express.static(`client/build`))
+    app.get(`/`, async (req,res) =>{
+        return res.sendFile(path.resolve(__dirname,`${`/client/build/index.html`}`))
+       
+    })
+}
+
+if(process.env.MODE === "development"){
+    app.get(`/`, async (req,res) =>{
+        return res.status(StatusCodes.OK).json({ status: true, msg: "Welcome to Project-LMS-API"})
+       
+    })
+}
 
 //api routes
 app.use(`/api/auth`, require('./route/authRoute'))
