@@ -29,8 +29,9 @@ app.use(fileUpload({
 
 //index route
 if(process.env.MODE === "production") {
-    app.use(`/`, (req,res,next) =>{
-        return res.sendFile(path.join( `./client/build/index.html`))
+    app.use(`/`, (req,res,next) => {
+        return res.sendFile(path.resolve(__dirname,`./client/build/index.html`))
+        next()
     })
     
 }
